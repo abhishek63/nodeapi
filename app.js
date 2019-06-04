@@ -1,9 +1,19 @@
 const express = require('express');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 
 //configure dotenv
 dotenv.config();
+
+//database connection
+
+mongoose.connect(process.env.MONGO_URI).then(
+    () => {console.log('Database is connected') 
+});
+
+// //if error occur in the database then it will give error
+ mongoose.connection.on("error",(err)=> console.log(err));
 
 
 const app = express();
