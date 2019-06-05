@@ -77,4 +77,11 @@ router.post("/signin", function(req, res) {
     res.json({ token, user: { _id, name, email } });
   });
 });
+
+//signout
+router.get("/signout", function(req, res) {
+  res.clearCookie("t");
+  return res.json({ msg: "signout" });
+});
+
 module.exports = router;
