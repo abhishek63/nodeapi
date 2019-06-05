@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const router = require('./routes/route');
+const bodyParser = require('body-parser')
 
 //configure dotenv
 dotenv.config();
@@ -23,6 +24,7 @@ const app = express();
 //middleware used
 app.use(morgan('dev'))
 app.use('/api',router)
+app.use(bodyParser())
 
 
 //routes
