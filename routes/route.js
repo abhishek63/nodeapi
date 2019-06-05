@@ -33,7 +33,7 @@ router.post("/post", validator.createPostValidator, function(req, res) {
 });
 
 //signup
-router.post("/signup", async function(req, res) {
+router.post("/signup",validator.userSignupValidator, async function(req, res) {
     const userExists = await User.findOne({ email: req.body.email });
     if (userExists)
         return res.status(403).json({
