@@ -7,6 +7,13 @@ exports.createPostValidator = (req,res,next)=>{
         max : 150
     })
 
+    ////body
+    req.check('body','Body is required').notEmpty();
+    req.check('body',"Body must be between 4 and 1550 characters").isLength({
+        min : 4,
+        max : 1550
+    })
+
     //checks for error
     const errors = req.validationErrors();
 
