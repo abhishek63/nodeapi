@@ -2,9 +2,11 @@ const express = require('express');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const router = require('./routes/route');
 
 //configure dotenv
 dotenv.config();
+
 
 //database connection
 
@@ -20,6 +22,7 @@ const app = express();
 
 //middleware used
 app.use(morgan('dev'))
+app.use('/api',router)
 
 
 //routes
