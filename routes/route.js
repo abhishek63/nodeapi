@@ -6,6 +6,10 @@ const cookieParser = require("cookie-parser");
 const expressValidator = require("express-validator");
 const validator = require("../validators");
 const jwt = require("jsonwebtoken");
+const expressJwt = require("express-jwt");
+const dotenv = require('dotenv');
+
+dotenv.config()
 
 const router = express.Router();
 router.use(bodyParser());
@@ -13,16 +17,22 @@ router.use(cookieParser());
 router.use(expressValidator());
 
 //getting all the result from database
-router.get("/posts", function(req, res) {
-  const posts = Post.find()
-    .select("_id title body") // only these field display
-    .then(posts =>
-      res.json({
-        posts: posts
-      })
-    )
-    .catch(error => console.log(error));
-});
+router.get(
+  "/posts",
+  expressJwt({
+    secret: process.env.JWT_SECRET
+  }),
+  function(req, res) {
+    const posts = Post.find()
+      .select("_id title body") // only these field display
+      .then(posts =>
+        res.json({
+          posts: posts
+        })
+      )
+      .catch(error => console.log(error));
+  }
+);
 
 router.post("/post", validator.createPostValidator, function(req, res) {
   const post = new Post(req.body);
@@ -83,5 +93,6 @@ router.get("/signout", function(req, res) {
   res.clearCookie("t");
   return res.json({ msg: "signout" });
 });
+
 
 module.exports = router;
