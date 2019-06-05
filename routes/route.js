@@ -10,7 +10,7 @@ router.use(expressValidator())
 
 //getting all the result from database
 router.get("/posts",function(req,res){
-    const posts = Post.find()
+    const posts = Post.find().select("_id title body") // only these field display
     .then(posts=>res.json({
         posts : posts
     }))
