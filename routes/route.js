@@ -8,12 +8,13 @@ const router = express.Router();
 router.use(bodyParser())
 router.use(expressValidator())
 
-
+//getting all the result from database
 router.get("/posts",function(req,res){
-    res.json({
-        title : "this is first post",
-        body : "this is body content"
-    })
+    const posts = Post.find()
+    .then(posts=>res.json({
+        posts : posts
+    }))
+    .catch(error => console.log(error))
 })
 
 
@@ -21,9 +22,9 @@ router.post('/post',validator.createPostValidator,function(req,res){
     const post = new Post(req.body);
    // console.log(req.body)
    //saving to db
-   post.save((error,result)=>{
-       if(error)
-        res.status(200).json({
+   post.save((error, result)=>{
+    
+        res.json({
             "post" : result
         })
    })
