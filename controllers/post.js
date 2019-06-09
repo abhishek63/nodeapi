@@ -2,6 +2,18 @@ const Post = require("../models/post");
 const formidable = require("formidable");
 const fs = require("fs");
 
+exports.postById=(req,res,next ,id)=>{
+    Post.findById(id)
+        .populate("postedBy","_id name")
+        .exec((err,post)=>{
+            if(err || !post)
+                return res.status(403).json({error : err})
+            
+            req.post = post
+            next()
+        })
+}
+
 exports.getPosts = (req, res) => {
     const posts = Post.find()
         .populate("postedBy","_id name")
@@ -54,4 +66,6 @@ exports.postsByUser= (req,res)=>{
 
     })
 }
+
+
 
