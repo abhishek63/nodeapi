@@ -1,6 +1,7 @@
 const Post = require("../models/post");
 const formidable = require("formidable");
 const fs = require("fs");
+const _ = require("lodash")
 
 exports.postById=(req,res,next ,id)=>{
     Post.findById(id)
@@ -98,4 +99,19 @@ exports.deletePost = (req,res)=>{
         })
     })
 }
+
+exports.updatePost = (req, res, next) => {
+    let post = req.post;
+    post = _.extend(post, req.body); // extend - mutate the source object
+    post.updated = Date.now();
+    post.save(err => {
+        if (err) {
+            return res.status(400).json({
+                error: "You are not authorized to perform this action"
+            });
+        }
+
+        res.json({ post });
+    });
+};
 
