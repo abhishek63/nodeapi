@@ -10,6 +10,7 @@ exports.postById=(req,res,next ,id)=>{
                 return res.status(403).json({error : err})
             
             req.post = post
+            console.log("hello owoo",req.post)
             next()
         })
 }
@@ -67,5 +68,34 @@ exports.postsByUser= (req,res)=>{
     })
 }
 
+exports.isPoster = (req, res, next) => {
+    const isPoster =
+        req.post && req.auth && req.post.postedBy._id == req.auth._id;
 
+    if (!isPoster) {
+        return res.status(403).json({
+            error: "User is not authorized to perform this deletion"
+        });
+    }
+
+    console.log("isposter",isPoster)
+
+    next();
+};
+
+
+exports.deletePost = (req,res)=>{
+    let post = req.post
+    post.remove((err,post)=>{
+        if(err){
+            return res.status(403).json({
+                error :err
+            })
+        }
+
+        res.json({
+            message : "post is successfully deleted"
+        })
+    })
+}
 
