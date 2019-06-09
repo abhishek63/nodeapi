@@ -1,44 +1,46 @@
-const express = require('express');
-const morgan = require('morgan');
-const dotenv = require('dotenv');
-const mongoose = require('mongoose');
-const router = require('./routes/route');
-const bodyParser = require('body-parser')
-
-//configure dotenv
+const express = require("express");
+const app = express();
+const mongoose = require("mongoose");
+const morgan = require("morgan");
+const bodyParser = require("body-parser");
+var cookieParser = require("cookie-parser");
+const expressValidator = require("express-validator");
+const dotenv = require("dotenv");
 dotenv.config();
 
+// db
+// MONGO_URI=mongodb://localhost/nodeapi
+mongoose
+    .connect(
+        process.env.MONGO_URI,
+        { useNewUrlParser: true }
+    )
+    .then(() => console.log("DB Connected"));
 
-//database connection
-
-mongoose.connect(process.env.MONGO_URI).then(
-    () => {console.log('Database is connected') 
+mongoose.connection.on("error", err => {
+    console.log(`DB connection error: ${err.message}`);
 });
 
-// //if error occur in the database then it will give error
- mongoose.connection.on("error",(err)=> console.log(err));
+// bring in routes
+const postRoutes = require("./routes/post");
+const authRoutes = require("./routes/auth");
+const userRoutes = require("./routes/user");
 
-
-const app = express();
-
-//middleware used
-app.use(morgan('dev'))
-app.use('/api',router)
-app.use(bodyParser())
-app.use(function (err, req, res, next) {
-    if (err.name === 'UnauthorizedError') {
-      res.status(401).json({error : "unauthorized error"});
+// middleware
+app.use(morgan("dev"));
+app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(expressValidator());
+app.use("/", postRoutes);
+app.use("/", authRoutes);
+app.use("/", userRoutes);
+app.use(function(err, req, res, next) {
+    if (err.name === "UnauthorizedError") {
+        res.status(401).json({ error: "Unauthorized!" });
     }
-  });
+});
 
-
-//routes
-app.get('/',function(req,res){
-    res.send("Hello world")
-})
-
-const PORT = process.env.PORT || 8080
-
-app.listen(PORT,function(){
-    console.log(`server is running on port ${PORT}` );
-})
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+    console.log(`A Node Js API is listening on port: ${port}`);
+});
